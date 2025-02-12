@@ -1,15 +1,20 @@
 import { ShoppingCart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../../services/api";
+import { CartContext } from "../../context/cartContext";
+
+export interface productsProps {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+}
 
 const Home = () => {
-  interface productsProps {
-    id: number;
-    title: string;
-    price: number;
-    image: string;
-  }
   const [products, setProducts] = useState<productsProps[]>([]);
+
+  const { addItemCart } = useContext(CartContext);
+
   useEffect(() => {
     async function getProduct() {
       const response = await api.get("/products");
@@ -38,8 +43,9 @@ const Home = () => {
               <img
                 src={product.image}
                 alt={product.title}
-                className="w-full rounded-lg max-h-70 mb-2"
+                className="w-full max-h-70  rounded-lg mb-2"
               />
+
               <p className="font-medium mt-1 mb-2">{product.title}</p>
               <div className="flex gap-3 items-center">
                 <strong className="text-zinc-700/90">
@@ -48,7 +54,10 @@ const Home = () => {
                     currency: "USD",
                   })}
                 </strong>
-                <span className="bg-zinc-900 rounded p-1">
+                <span
+                  className="bg-zinc-900 rounded p-1 cursor-pointer"
+                  onClick={() => addItemCart(product)}
+                >
                   <ShoppingCart size={20} color="#fff" />
                 </span>
               </div>
