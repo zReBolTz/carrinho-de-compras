@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { CartContext } from "../../context/cartContext";
 
 const Cart = () => {
-  const { cart } = useContext(CartContext);
+  const { cart, removeItemCart, addItemCart } = useContext(CartContext);
   return (
     <div className="w-full max-w-7xl mx-auto ">
       <h1 className="font-bold text-2xl text-center my-4">Meu Carrinho</h1>
@@ -20,11 +20,17 @@ const Cart = () => {
           </strong>
 
           <div className="flex gap-3 items-center justify-center">
-            <button className="px-2 bg-slate-600 text-white rounded font-meidum flex items-center justify-center">
+            <button
+              className="px-2 bg-slate-600 text-white rounded font-meidum flex items-center justify-center cursor-pointer"
+              onClick={() => removeItemCart(item)}
+            >
               -
             </button>
             {item.amount}
-            <button className="px-2 bg-slate-600 text-white rounded font-meidum flex items-center justify-center">
+            <button
+              className="px-2 bg-slate-600 text-white rounded font-meidum flex items-center justify-center cursor-pointer"
+              onClick={() => addItemCart(item)}
+            >
               +
             </button>
           </div>

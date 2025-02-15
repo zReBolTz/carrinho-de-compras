@@ -8,7 +8,8 @@ interface CartProviderProps {
 interface CartContextData {
   cart: CartProps[];
   cartAmount: number;
-  addItemCart: (product: productsProps) => void;
+  addItemCart: (newProduct: productsProps) => void;
+  removeItemCart: (product: CartProps) => void;
 }
 
 interface CartProps {
@@ -28,11 +29,18 @@ const CartProvider = ({ children }: CartProviderProps) => {
   function addItemCart(newProduct: productsProps) {
     const indexItem = cart.findIndex((item) => item.id === newProduct.id);
     if (indexItem !== -1) {
-      let cartList = cart;
-      cartList[indexItem].amount = cartList[indexItem].amount + 1;
-      cartList[indexItem].total =
-        cartList[indexItem].amount * cartList[indexItem].price;
-      setCart(cartList);
+      const updatedCart = cart.map((item, index) => {
+        if (index === indexItem) {
+          return {
+            ...item,
+            amount: item.amount + 1,
+            total: (item.amount + 1) * item.price,
+          };
+        }
+        return item;
+      });
+
+      setCart(updatedCart);
       return;
     }
     const data = {
@@ -42,9 +50,29 @@ const CartProvider = ({ children }: CartProviderProps) => {
     };
     setCart((product) => [...product, data]);
   }
+
+  function removeItemCart(product: CartProps) {
+    const indexItem = cart.findIndex((item) => item.id === product.id);
+    if (indexItem !== -1 && cart[indexItem]?.amount > 1) {
+      const updateCart = cart.map((itemProduct, index) => {
+        if (index === indexItem) {
+          return {
+            ...itemProduct,
+            amount: itemProduct.amount - 1,
+            total: itemProduct.total - itemProduct.price,
+          };
+        }
+        return itemProduct;
+      });
+      setCart(updateCart);
+      return;
+    }
+    const removeItem = cart.filter((item) => item.id !== product.id);
+    setCart(removeItem);
+  }
   return (
     <CartContext.Provider
-      value={{ cart, cartAmount: cart.length, addItemCart }}
+      value={{ cart, cartAmount: cart.length, addItemCart, removeItemCart }}
     >
       {children}
     </CartContext.Provider>
