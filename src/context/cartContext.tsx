@@ -10,6 +10,7 @@ interface CartContextData {
   cartAmount: number;
   addItemCart: (newProduct: productsProps) => void;
   removeItemCart: (product: CartProps) => void;
+  total: string;
 }
 
 interface CartProps {
@@ -25,6 +26,7 @@ export const CartContext = createContext({} as CartContextData);
 
 const CartProvider = ({ children }: CartProviderProps) => {
   const [cart, setCart] = useState<CartProps[]>([]);
+  const [total, setTotal] = useState("");
 
   function addItemCart(newProduct: productsProps) {
     const indexItem = cart.findIndex((item) => item.id === newProduct.id);
@@ -41,6 +43,7 @@ const CartProvider = ({ children }: CartProviderProps) => {
       });
 
       setCart(updatedCart);
+      totalResultCart(updatedCart);
       return;
     }
     const data = {
@@ -49,6 +52,7 @@ const CartProvider = ({ children }: CartProviderProps) => {
       total: newProduct.price,
     };
     setCart((product) => [...product, data]);
+    totalResultCart([...cart, data]);
   }
 
   function removeItemCart(product: CartProps) {
@@ -65,14 +69,31 @@ const CartProvider = ({ children }: CartProviderProps) => {
         return itemProduct;
       });
       setCart(updateCart);
+      totalResultCart(updateCart);
       return;
     }
     const removeItem = cart.filter((item) => item.id !== product.id);
     setCart(removeItem);
+    totalResultCart(removeItem);
+  }
+  function totalResultCart(items: CartProps[]) {
+    let myCart = items;
+    const result = myCart.reduce((acc, obj) => acc + obj.total, 0);
+    const formattedResdult = result.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
+    setTotal(formattedResdult);
   }
   return (
     <CartContext.Provider
-      value={{ cart, cartAmount: cart.length, addItemCart, removeItemCart }}
+      value={{
+        cart,
+        cartAmount: cart.length,
+        addItemCart,
+        removeItemCart,
+        total,
+      }}
     >
       {children}
     </CartContext.Provider>

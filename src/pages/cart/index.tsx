@@ -1,11 +1,24 @@
 import { useContext } from "react";
 import { CartContext } from "../../context/cartContext";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
-  const { cart, removeItemCart, addItemCart } = useContext(CartContext);
+  const { cart, removeItemCart, addItemCart, total } = useContext(CartContext);
   return (
     <div className="w-full max-w-7xl mx-auto ">
-      <h1 className="font-bold text-2xl text-center my-4">Meu Carrinho</h1>
+      <h1 className="font-bold text-2xl text-center my-4 flec-col">
+        Meu Carrinho
+      </h1>
+      {cart.length === 0 && (
+        <div className="flex mt-10  flex-col items-center">
+          <h1 className="font-bold">
+            Ops, Nenhum produto encontrado no carrinho!
+          </h1>
+          <Link to="/" className="bg-blue-400 px-3 py-1 rounded mt-3">
+            <h1>Voltar</h1>
+          </Link>
+        </div>
+      )}
       {cart.map((item) => (
         <section
           key={item.id}
@@ -43,7 +56,7 @@ const Cart = () => {
           </strong>
         </section>
       ))}
-      <p className="font-bold mt-4">Total: R$1.500,00</p>
+      {cart.length !== 0 && <p className="font-bold mt-4">Total: {total}</p>}
     </div>
   );
 };
