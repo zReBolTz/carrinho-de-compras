@@ -19,6 +19,7 @@ interface CartProps {
   price: number;
   image: string;
   amount: number;
+  description: string;
   total: number;
 }
 
